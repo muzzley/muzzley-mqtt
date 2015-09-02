@@ -1,0 +1,14 @@
+{
+  "name": "muzzley-mqtt",
+  "version": "1.0.0",
+  "description": "This module wraps around the mqtt module and provides further functionality, namely Topic parsing and Correlation id Auto-Fill.",
+  "main": "index.js",
+  "author": {
+    "name": "Pedro Carvalho",
+    "email": "pedro.carvalho@muzzley.com"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "mqtt": "^1.4.0"
+  }
+}
