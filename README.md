@@ -1,10 +1,8 @@
 # Muzzley MQTT Wrapper
 
-This module wraps around the <a href='https://www.npmjs.com/package/mqtt'>mqtt</a> module and provides further functionality, namely:
-<ul>
-  <li>Topic parsing</li>
-  <li>Auto-Fill correlation id</li>
-</ul>
+This module wraps around the [mqtt](https://www.npmjs.com/package/mqtt) module and provides further functionality, namely:
+* Topic parsing
+* Correlation ID Auto-Fill
 
 ### Install
 Not yet available on npm, clone this repository to use this wrapper.
