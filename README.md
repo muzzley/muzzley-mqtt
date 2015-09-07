@@ -7,6 +7,9 @@ This module wraps around the [mqtt](https://www.npmjs.com/package/mqtt) module a
 ### Install
 Not yet available on npm, clone this repository to use this wrapper.
 
+### Run Tests
+Just run `npm test` (100% coverage)
+
 ### Usage
 ```js
 var muzzleyMqtt = require('muzzley-mqtt');
@@ -24,18 +27,24 @@ var topicOptions = {
 var client = muzzleyMqtt.connect(mqttOptions);
 
 client.on('connect', function () {
+  //creat a topic with options
   var topic = new muzzleyMqtt.topic(topicOptions.version, topicOptions.namespace, topicOptions.options);
+  //stringify it to subscribe
   client.subscribe(topic.stringify(), function(err, granted){
     //Handle subscription
   });
 };
 
-client.on('message', function(topic, message){
-  client.emit('wrapMessage', message, function(err, wrappedMessage){
-      //If the message is a read, wrappedMessage will have the _cid already set
-      //Now you only need to handle all the other message properties (namely io and data)
+client.on('message', function(topic, OldMessage){
+  //process the topic
+  var parsedTopic = Topic.parse(topic);
+  //process and create a return message (add custom logic)
+  var returnMessage = {};
 
-      //After processing the message if you want you can then perform a publish on the topic
+  client.emit('wrapMessage', oldMessage, returnMessage, function(err, wrappedMessage){
+      //If the message is a read, wrappedMessage will have the _cid already set
+      //Also the message will be an 'i' message
+      //Now you only need to stringify it and publish
       client.publish(topic, JSON.stringify(wrappedMessage));
   });
 });

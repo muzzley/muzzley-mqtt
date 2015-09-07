@@ -7,8 +7,17 @@
     "name": "Pedro Carvalho",
     "email": "pedro.carvalho@muzzley.com"
   },
+  "scripts": {
+    "test": "lab -c"
+  },
   "license": "ISC",
   "dependencies": {
+    "joi": "^6.6.1",
     "mqtt": "^1.4.0"
+  },
+  "devDependencies": {
+    "code": "^1.5.0",
+    "lab": "^5.16.0",
+    "uuid": "^2.0.1"
   }
 }
