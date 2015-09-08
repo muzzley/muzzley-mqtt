@@ -8,7 +8,7 @@ var messageSchema = {
     io: Joi.string().valid('w', 'r', 'i').required(),
     _cid: Joi.string(),
     u: Joi.object().keys({
-      id: Joi.string(),
+      id: Joi.any(),
       name: Joi.string()
     }),
     data: Joi.object()

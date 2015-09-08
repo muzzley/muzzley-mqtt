@@ -44,8 +44,12 @@ client.on('message', function(topic, OldMessage){
   client.emit('wrapMessage', oldMessage, returnMessage, function(err, wrappedMessage){
       //If the message is a read, wrappedMessage will have the _cid already set
       //Also the message will be an 'i' message
-      //Now you only need to stringify it and publish
-      client.publish(topic, JSON.stringify(wrappedMessage));
+      //Now you only need to deal with the error (if any) and stringify the message for publishing
+      if (err) {
+        console.log(err);
+      } else {
+        client.publish(topic, JSON.stringify(wrappedMessage));
+      }
   });
 });
 
