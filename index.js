@@ -5,30 +5,30 @@ var muzzleyMqtt = extend(mqtt);
 muzzleyMqtt.topic = Topic;
 
 var messageSchema = {
-    io: Joi.string().valid('w', 'r', 'i').required(),
-    _cid: Joi.string(),
-    u: Joi.object().keys({
-      id: Joi.any(),
-      name: Joi.string()
-    }),
-    data: Joi.object()
+  io: Joi.string().valid('w', 'r', 'i').required(),
+  _cid: Joi.string(),
+  u: Joi.object().keys({
+    id: Joi.any(),
+    name: Joi.string()
+  }),
+  data: Joi.object()
 };
 
 var oldConnectFunction = muzzleyMqtt.connect;
-muzzleyMqtt.connect = function(mqttOptions){
+muzzleyMqtt.connect = function (mqttOptions) {
   var client = oldConnectFunction.call(this, mqttOptions);
 
-  client.on('wrapMessage', function(oldMessage, newMessage, callback){
+  client.on('wrapMessage', function (oldMessage, newMessage, callback) {
     oldMessage = parse(oldMessage);
-    if(oldMessage instanceof Error){
+    if (oldMessage instanceof Error) {
       return callback(oldMessage);
     }
     newMessage = parse(newMessage);
-    if(newMessage instanceof Error){
+    if (newMessage instanceof Error) {
       return callback(newMessage);
     }
     var validOldMessage = Joi.validate(oldMessage, messageSchema);
-    if(validOldMessage.error){
+    if (validOldMessage.error) {
       return callback(new Error('Invalid message format'));
     }
 
@@ -42,7 +42,7 @@ muzzleyMqtt.connect = function(mqttOptions){
   return client;
 };
 
-function parse(message){
+function parse (message) {
   if (typeof message === 'string') {
     return JSON.parse(message);
   }
@@ -55,9 +55,8 @@ function parse(message){
   return new Error('Unsupported message type: ' + typeof message);
 }
 
-
-function extend (o){
-  function F (){};
+function extend (o) {
+  function F () {}
   F.prototype = o;
   return new F();
 }
