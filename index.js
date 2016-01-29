@@ -9,7 +9,7 @@ var messageSchema = {
   _cid: Joi.string(),
   u: Joi.object().keys({
     id: Joi.any(),
-    name: Joi.string()
+    name: Joi.any()
   }),
   data: Joi.object()
 };
