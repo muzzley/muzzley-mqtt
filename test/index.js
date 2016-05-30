@@ -1,25 +1,27 @@
-var Code = require('code');
-var Lab = require('lab');
-var lab = exports.lab = Lab.script();
-var muzzleyMqtt = require('../index');
-var uuid = require('uuid');
+'use strict';
 
-lab.experiment('Testing MQTT wrapper', function () {
-  lab.test('connection', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+const Code = require('code');
+const Lab = require('lab');
+const lab = exports.lab = Lab.script();
+const muzzleyMqtt = require('../index');
+const uuid = require('uuid');
 
-    client.on('connect', function () {
+lab.experiment('Testing MQTT wrapper', () => {
+  lab.test('connection', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+
+    client.on('connect', () => {
       Code.expect(true).to.be.true();
       done();
     });
   });
 
-  lab.test('subscription', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+  lab.test('subscription', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
 
-    var subscriptionTopic = uuid.v1();
-    client.on('connect', function () {
-      client.subscribe(subscriptionTopic, function (err, granted) {
+    const subscriptionTopic = uuid.v1();
+    client.on('connect', () => {
+      client.subscribe(subscriptionTopic, (err, granted) => {
         Code.expect(err).to.be.null();
         Code.expect(granted).to.be.array();
         done();
@@ -27,34 +29,35 @@ lab.experiment('Testing MQTT wrapper', function () {
     });
   });
 
-  lab.test('publishing', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+  lab.test('publishing', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
 
-    var subscriptionTopic = uuid.v1();
-    client.on('connect', function () {
-      client.subscribe(subscriptionTopic, function (err, granted) {
+    const subscriptionTopic = uuid.v1();
+    client.on('connect', () => {
+      client.subscribe(subscriptionTopic, (err, granted) => {
+        Code.expect(err).to.be.null();
         client.publish(subscriptionTopic, 'Hello, World!');
       });
     });
 
-    client.on('message', function (topic, message) {
+    client.on('message', (topic, message) => {
       Code.expect(topic).to.equal(subscriptionTopic);
       Code.expect(message.toString()).to.equal('Hello, World!');
       done();
     });
   });
 
-  lab.test('message wrapping - String', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - String', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       io: 'r'
     };
-    var newMessage = {
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', JSON.stringify(oldMessage), JSON.stringify(newMessage), function (err, emittedMessage) {
+    client.emit('wrapMessage', JSON.stringify(oldMessage), JSON.stringify(newMessage), (err, emittedMessage) => {
       Code.expect(err).to.be.null();
       Code.expect(emittedMessage.io).to.equal('i');
       Code.expect(emittedMessage.data.value).to.equal('random data value');
@@ -62,17 +65,17 @@ lab.experiment('Testing MQTT wrapper', function () {
     });
   });
 
-  lab.test('message wrapping - Object', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - Object', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       io: 'w'
     };
-    var newMessage = {
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', oldMessage, newMessage, function (err, emittedMessage) {
+    client.emit('wrapMessage', oldMessage, newMessage, (err, emittedMessage) => {
       Code.expect(err).to.be.null();
       Code.expect(emittedMessage.io).to.equal('i');
       Code.expect(emittedMessage.data.value).to.equal('random data value');
@@ -80,17 +83,17 @@ lab.experiment('Testing MQTT wrapper', function () {
     });
   });
 
-  lab.test('message wrapping - Buffer', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - Buffer', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       io: 'w'
     };
-    var newMessage = {
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', new Buffer(JSON.stringify(oldMessage)), new Buffer(JSON.stringify(newMessage)), function (err, emittedMessage) {
+    client.emit('wrapMessage', new Buffer(JSON.stringify(oldMessage)), new Buffer(JSON.stringify(newMessage)), (err, emittedMessage) => {
       Code.expect(err).to.be.null();
       Code.expect(emittedMessage.io).to.equal('i');
       Code.expect(emittedMessage.data.value).to.equal('random data value');
@@ -98,18 +101,18 @@ lab.experiment('Testing MQTT wrapper', function () {
     });
   });
 
-  lab.test('message wrapping - RPC', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - RPC', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       io: 'r',
       _cid: 'random cid number'
     };
-    var newMessage = {
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', oldMessage, newMessage, function (err, emittedMessage) {
+    client.emit('wrapMessage', oldMessage, newMessage, (err, emittedMessage) => {
       Code.expect(err).to.be.null();
       Code.expect(emittedMessage.io).to.equal('i');
       Code.expect(emittedMessage._cid).to.equal('random cid number');
@@ -118,45 +121,57 @@ lab.experiment('Testing MQTT wrapper', function () {
     });
   });
 
-  lab.test('message wrapping - Invalid format', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - Invalid format', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       oi: 'r'
     };
-    var newMessage = {
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', oldMessage, newMessage, function (err, emittedMessage) {
+    client.emit('wrapMessage', oldMessage, newMessage, (err, emittedMessage) => {
       Code.expect(err).not.to.be.null();
-      Code.expect(err.message).to.equal('Invalid message format');
+      Code.expect(err.message).to.equal('child "io" fails because ["io" is required]');
       done();
     });
   });
 
-  lab.test('message wrapping - Unsupported type oldMessage', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var newMessage = {
+  lab.test('message wrapping - Unsupported type oldMessage', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const newMessage = {
       data: {
         value: 'random data value'
       }
     };
-    client.emit('wrapMessage', 42, newMessage, function (err, emittedMessage) {
+    client.emit('wrapMessage', 42, newMessage, (err, emittedMessage) => {
       Code.expect(err).not.to.be.null();
       Code.expect(err.message).to.equal('Unsupported message type: number');
       done();
     });
   });
 
-  lab.test('message wrapping - Unsupported type newMessage', function (done) {
-    var client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
-    var oldMessage = {
+  lab.test('message wrapping - Unsupported type newMessage', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
       oi: 'r'
     };
-    client.emit('wrapMessage', oldMessage, 42, function (err, emittedMessage) {
+    client.emit('wrapMessage', oldMessage, 42, (err, emittedMessage) => {
       Code.expect(err).not.to.be.null();
       Code.expect(err.message).to.equal('Unsupported message type: number');
+      done();
+    });
+  });
+
+  lab.test('message wrapping - parse exception', (done) => {
+    const client = muzzleyMqtt.connect('mqtt://test.mosquitto.org');
+    const oldMessage = {
+      oi: 'r'
+    };
+    client.emit('wrapMessage', oldMessage, '{42', (err, emittedMessage) => {
+      Code.expect(err).not.to.be.null();
+      Code.expect(err.message).to.equal('Unexpected number');
       done();
     });
   });
